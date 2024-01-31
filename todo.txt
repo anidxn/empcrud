@@ -1,0 +1,7 @@
+basic css + 
+
+custom error page
+try catch
+regex validation
+prepared statement
+PDO

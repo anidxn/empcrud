@@ -1,0 +1,17 @@
+
+#loginform{
+    border: solid gray 4px;
+    width: 20%;
+    border-radius: 5px;
+    margin: 100px auto;
+    background: white;
+    padding: 50px;
+}
+
+#btnlogin{
+    color: white;
+    background: cornflowerblue;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-left: 50%;
+}

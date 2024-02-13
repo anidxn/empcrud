@@ -4,7 +4,8 @@
 <body>
 <!--  enctype="multipart/form-data" -->
 
-<form action="upload_backend.php" method="post" enctype="multipart/form-data">
+<!-- <form action="upload_backend.php" method="post" enctype="multipart/form-data"> -->
+<form action="upload_by_func.php" method="post" enctype="multipart/form-data">
     
     Select image to upload:  <input type="file" name="fileToUpload" id="fileToUpload" accept=".jpg,.jpeg,.png">
     <input type="submit" value="Upload Image" name="btnupload">

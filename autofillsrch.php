@@ -19,6 +19,7 @@
     </script>
     </head>
 	<body>
+    <?php include 'navbar.php'; ?>
         
 			<table width="50%">
 				<tr>

@@ -38,6 +38,7 @@ if(isset($_GET['status'])) {
     <script src="res/js/jquery-3.6.3.js"></script>
     </head>
 	<body>
+        <?php include 'navbar.php'; ?>
 		<form action="serverops.php?opcode=5" method="POST">
 			<table width="50%">
 				<tr>

@@ -1,15 +1,15 @@
 <?php
     include 'connect.php';
 
-    session_start();
+    // session_start();
 
-    if(!isset($_SESSION['login_user'])){
-        header("location:index.php?err=2");
-        die(); //get out
-    }
+    // if(!isset($_SESSION['login_user'])){
+    //     header("location:index.php?err=2");
+    //     die(); //get out
+    // }
 
-    $logged_user = $_SESSION['login_user'];
-    $usrid = $_SESSION["login_usrid"];  // String value
+    // $logged_user = $_SESSION['login_user'];
+    // $usrid = $_SESSION["login_usrid"];  // String value
 
     // echo gettype($usrid);  *********** Gives datatype of a variable
 
@@ -26,12 +26,15 @@
 
 <html>
     <body>
-        <a href='usrgen.php'>Create user</a>
+        <?php include 'navbar.php'; ?>
+        <!-- <a href='usrgen.php'>Create user</a>
         <a href='viewall.php'>View all user</a>
+        <a href='offices.php'>Offices (dependency DDL)</a>
+        <a href='autofillsrch.php'>Projects (Autofill)</a>
         <a href='pg_login.php'>Switch to postgres</a>
         <a href='logout.php'>Logout</a>
         <br>
-        Welcome <?php echo $logged_user; ?><br>
+        Welcome <?php echo $logged_user; ?><br> -->
 
 <?php
 $sql="select * from users where uid=".$usrid;

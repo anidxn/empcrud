@@ -13,6 +13,7 @@ if(isset($_GET['status'])) {
 <!DOCTYPE html>
 <html>
 	<body>
+	<?php include 'navbar.php'; ?>
 		<form action="serverops.php?opcode=1" method="POST">
 			<table width="50%">
 				<tr>

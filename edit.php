@@ -56,12 +56,7 @@ $conn->close();
         </style>
     </head>
     <body>
-        <a href='dashboard.php'>Home</a>
-        <a href='usrgen.php'>Create user</a>
-        <a href='viewall.php'>View all user</a>
-        <a href='logout.php'>Logout</a>
-        <br>
-        Welcome <?php echo $logged_user; ?><br>
+    <?php include 'navbar.php'; ?>
 
         <form action="serverops.php?opcode=3" method="POST">
 			<table width="50%">

@@ -22,6 +22,11 @@
 
 <html>
     <head>
+    
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="res/css/navstyle.css">
+	
+
         <style>
         table, th, td {
             border: 1px solid white;

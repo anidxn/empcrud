@@ -1,5 +1,10 @@
 <html>
+    <head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../res/css/navstyle.css">
+	</head>
     <body>
+    <?php include '../navbar.php'; ?>
 
 <form method="post" action="" enctype='multipart/form-data'>
     <input type='file' name='file' />
@@ -7,7 +12,7 @@
 </form>
 
 <?php
-include("connect.php");
+include("../connect.php");
 
 if(isset($_POST['but_upload']) && !empty($_FILES["file"]["name"])){
  

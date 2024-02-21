@@ -1,7 +1,13 @@
 
 <!DOCTYPE html>
 <html>
+    <head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../res/css/navstyle.css">
+	</head>
 <body>
+    <?php include '../navbar.php'; ?>
+    UPload file to folder & store the path in db
 <!--  enctype="multipart/form-data" -->
 
 <!-- <form action="upload_backend.php" method="post" enctype="multipart/form-data"> -->
@@ -12,7 +18,7 @@
 </form>
 
 <?php
-    include 'connect.php';
+    include '../connect.php';
 
     $sql = "select name from images order by id";
     $result = mysqli_query($conn,$sql);

@@ -35,7 +35,11 @@ if(isset($_GET['status'])) {
 <!DOCTYPE html>
 <html>
     <head>
-    <script src="res/js/jquery-3.6.3.js"></script>
+    
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="res/css/navstyle.css">
+	
+        <script src="res/js/jquery-3.6.3.js"></script>
     </head>
 	<body>
         <?php include 'navbar.php'; ?>

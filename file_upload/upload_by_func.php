@@ -1,7 +1,7 @@
 <?php
 
 include 'upload_file_func.php';
-include 'connect.php';
+include '../connect.php';
 
 
 if(!empty($_FILES["fileToUpload"]["name"])) {   //  $_FILES["fileToUpload"] gives the uploaded file(s) 

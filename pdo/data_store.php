@@ -18,7 +18,7 @@
 					<td>:</td><td><input type="password" name="upass" id="upass"/></td>
 				</tr> -->
 				<tr>
-					<td colspan="2"><input type="submit" name="submit" id="submit" value="Create User"/></td>
+					<td colspan="2"><input type="submit" name="submit" id="submit" value="Save"/></td>
 				</tr>
 				
 			</table>

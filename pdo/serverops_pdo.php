@@ -8,20 +8,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ( $opcode == 1) {
         try{
 		$bname = $_POST['txtName'];
-		$bprice = $_POST['txtPrice'];
+		$bprice = floatval($_POST['txtPrice']);
 		$bqnty = (int)$_POST['txtQnty'];
+        
+        // -------- usual execution ------
+        // $sql = "INSERT INTO books (book_name, price, quantity)  VALUES ('$bname', '$bprice', '$bqnty')";
+        // $pdo->exec($sql);  // use exec() because no results are returned
 		
+        
+        // --------- using prepared statement + BIND PARAMS() ------------
 		$sql="INSERT INTO books(book_name, price, quantity) VALUES(:book_name, :price, :quantity)";
 
         $statement = $pdo->prepare($sql);
 
-        $statement->execute([   // liat of parameters
+        $statement->bindParam(':book_name', $bname, PDO::PARAM_STR);
+        $statement->bindParam(':price', $bprice, PDO::PARAM_STR);  // * * * * FOR fractional values (numeric) use STR
+        $statement->bindParam(':quantity', $bqnty, PDO::PARAM_INT);
+        $statement->execute();
+
+        /*
+       
+        $statement->execute([   // list of parameters
             ':name' => $bname, 
             ':price' => $bprice,
             ':quantity' => $bqnty
-        ]);
+        ]);*/
+        
         
         $book_id = $pdo->lastInsertId();  # Returns the PKey of last inserted row
+        
 
         } catch(Exception $e){
             echo $e->getMessage();
@@ -32,9 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
 		//header("Location: data_store.php?status=".$book_id);
-		exit;
+		//exit;
 	    
     }
 
 }
 
+//$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+?>

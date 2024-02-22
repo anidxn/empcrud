@@ -2,7 +2,7 @@
 include 'connect.php';
 
 $opcode= $_GET['opcode'];
-if ( $opcode == 1) {
+if ( $opcode == 1) {							//--------- INSERT USING ObjectOriented Approach ------------
 	if(isset($_POST['submit'])) {
 		$emp_name = $_POST['ename'];
 		$email = $_POST['email'];
@@ -24,7 +24,7 @@ if ( $opcode == 1) {
 		header("Location: usrgen.php?status=".$status);
 		exit;
 	}
-} elseif( $opcode == 2) {
+} elseif( $opcode == 2) {			//------- login -----------
 
 	if(isset($_POST['btnlogin'])) {
 		$usr_name = $_POST['txtuname'];
@@ -54,7 +54,7 @@ if ( $opcode == 1) {
 		}
 	}
 
-} elseif ( $opcode == 3) {
+} elseif ( $opcode == 3) {		//------- update ---------
 
 	if(isset($_POST['btnedit'])) {
 		$emp_name = $_POST['ename'];
@@ -96,6 +96,51 @@ if ( $opcode == 1) {
 		if ($result == TRUE) {
 			echo "User ".$uid." deleted successfully";  //sending response to jquery ajax call
 		}
+} elseif ( $opcode == 5) {  					 // ----------------- INSERT project detils using PREPARED STATEMENTS in MYSQL --------
+	$stmt = $conn->prepare("INSERT INTO projects (ptitle, pdesc, est_cost) VALUES ( ?, ?, ?)");
+	// bind parameters with appropriate data type
+	$stmt->bind_param("ssd", $title, $description, $cost);
+
+	/*
+	i => corresponding variable has type int
+	d => corresponding variable has type float
+	s => corresponding variable has type string
+	b => corresponding variable is a blob and will be sent in packets
+	*/
+
+	// set parameters &  execute
+	$title = isset($_POST['txtptitle']) ? $_POST['txtptitle'] : '';
+	$description = isset($_POST['txtpdesc']) ? $_POST['txtpdesc'] : '';
+	$cost = isset($_POST['txtcost']) ? $_POST['txtcost'] : 0.0;
+	
+	$stmt->execute();
+	$status = 1;
+
+	/* * * * WE can insert multiple rows using different values with prev 4 lines, for example
+	// insert a row
+  $firstname = "John";
+  $lastname = "Doe";
+  $email = "john@example.com";
+  $stmt->execute();
+
+  // insert another row
+  $firstname = "Mary";
+  $lastname = "Moe";
+  $email = "mary@example.com";
+  $stmt->execute();
+
+  // insert another row
+  $firstname = "Julie";
+  $lastname = "Dooley";
+  $email = "julie@example.com";
+  $stmt->execute();
+	*/
+
+	$stmt->close();
+	$conn->close();
+
+	# header("Location: autofillsrch.php?status=".$status);
+
 }
 
 ?>

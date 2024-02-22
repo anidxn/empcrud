@@ -11,32 +11,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$bprice = floatval($_POST['txtPrice']);
 		$bqnty = (int)$_POST['txtQnty'];
         
-        // -------- usual execution ------
+        // OPTION 1: -------- usual execution ------
         // $sql = "INSERT INTO books (book_name, price, quantity)  VALUES ('$bname', '$bprice', '$bqnty')";
         // $pdo->exec($sql);  // use exec() because no results are returned
 		
         
-        // --------- using prepared statement + BIND PARAMS() ------------
+        // OPTION 2a: --------- using prepared statement + BIND PARAMS() ------------
 		$sql="INSERT INTO books(book_name, price, quantity) VALUES(:book_name, :price, :quantity)";
 
         $statement = $pdo->prepare($sql);
 
+        /*
         $statement->bindParam(':book_name', $bname, PDO::PARAM_STR);
-        $statement->bindParam(':price', $bprice, PDO::PARAM_STR);  // * * * * FOR fractional values (numeric) use STR
+        $statement->bindParam(':price', $bprice, PDO::PARAM_STR);  // * * * * FOR fractional values (numeric/float) use STR
         $statement->bindParam(':quantity', $bqnty, PDO::PARAM_INT);
         $statement->execute();
+        */
 
-        /*
-       
-        $statement->execute([   // list of parameters
-            ':name' => $bname, 
-            ':price' => $bprice,
-            ':quantity' => $bqnty
-        ]);*/
-        
+        /* Additionally ------->>> We can insert multiple records using the same same perpared statement, for ex. 
+        $bname = "Coffee Can Investing";    $bprice = "200.5";     $bqnty = "10";
+        $stmt->execute();
+
+        // insert another row
+        $bname = "Diamond In the Dust";    $bprice = "545.8";     $bqnty = "56";
+        $stmt->execute();
+        */
+
+        // OPTION 2b: ---------- using array of parameters ----------
+        $statement->execute([ ':book_name' => $bname, ':price' => $bprice, ':quantity' => $bqnty]);  // list of parameters
+        // OR without using :
+        //$statement->execute([ 'book_name' => $bname, 'price' => $bprice, 'quantity' => $bqnty]);
+
+        /* Additionally ----->> Inserting multiple rows --->>
+        $names = [
+	        'Penguin/Random House',
+	        'Hachette Book Group',
+	        'Harper Collins',
+	        'Simon and Schuster'
+        ];
+
+        foreach ($names as $name) { //process array in loop
+	        $statement->execute([
+		        ':name' => $name
+	        ]);
+        }
+        */
         
         $book_id = $pdo->lastInsertId();  # Returns the PKey of last inserted row
-        
 
         } catch(Exception $e){
             echo $e->getMessage();
@@ -54,5 +75,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+/*
+INSERT MULTIPLE rows with loop execute statement
+-------------------------------------------------------
+$pdo = require_once 'connect.php';
+
+$names = [
+	'Penguin/Random House',
+	'Hachette Book Group',
+	'Harper Collins',
+	'Simon and Schuster'
+];
+
+$sql = 'INSERT INTO publishers(name) VALUES(:name)';
+
+$statement = $pdo->prepare($sql);
+
+foreach ($names as $name) {
+	$statement->execute([
+		':name' => $name
+	]);
+}
+*/
 
 ?>

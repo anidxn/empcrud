@@ -23,6 +23,7 @@
     <a href='<?php echo '/empcrud/offices.php'; ?>'>Offices (dependency DDL)</a>
     <a href='<?php echo '/empcrud/autofillsrch.php'; ?>'>Projects (Autofill)</a>
     <a href='<?php echo '/empcrud/pg_login.php'; ?>'>Switch to postgres</a>
+    <a href='<?php echo '/empcrud/pdo/data_store.php'; ?>'>PDO</a>
     <div class="dropdown">
       <button class="dropbtn">Uploads</button>
       <div class="dropdown-content">

@@ -29,7 +29,9 @@ if ( $ajaxcode == 1) {  //search district
 	if(isset($_GET['term'])) {
 		$key = trim($_GET['term']);
 
-		$sql = "select * from projects where pdesc like '%$key%'";
+		// * * * * * * DON'T USE ECHO FOR DEBUGGING AJAX CALLS * * * * * * *
+
+		$sql = "select * from projects where ptitle like '%$key%'";
 
 		$result=$conn->query($sql);
         $parray = array();

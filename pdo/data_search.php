@@ -35,10 +35,10 @@
         
     <?php include 'navbar-pdo.php'; ?>
 
-        <!-- <form action="" method="get">
+        <form action="" method="get">
             <input type="text" name="txtBook" id="txtBook">
             <input type="submit" value="SEARCH">
-        </form> -->
+        </form>
 
     Book inventory 
 
@@ -49,8 +49,20 @@
 
     $sql="SELECT book_id, book_name, price, quantity FROM books";
 
-    $stmnt = $pdo->query($sql);
+    if($bookname != ''){
+        $sql = $sql . " where book_name = ?";
+        //or
+        // $sql = $sql." where book_name = :book_name ";
+    }
 
+    $stmnt = $pdo->prepare($sql);
+    if($bookname != ''){
+        $stmnt -> execute([$bookname]); // With parameter e.g. $stmnt->execute([175, 'yellow']);
+        // or
+        // $stmnt -> execute([':book_name' => $bookname]); 
+    } else {
+        $stmnt -> execute();
+    }
 
     $result = $stmnt->fetchall(PDO::FETCH_ASSOC); // returns an array of rows
 

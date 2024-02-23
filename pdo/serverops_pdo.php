@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $opcode= $_GET['opcode'];
 
-    if ( $opcode == 1) {
+    if ( $opcode == 1) {    //INSERT
         try{
 		$bname = $_POST['txtName'];
 		$bprice = floatval($_POST['txtPrice']);
@@ -67,8 +67,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo = null;
         }
 
-		//header("Location: data_store.php?status=".$book_id);
-		//exit;
+		header("Location: data_store.php?status=".$book_id);
+		exit();
+	    
+    } else if ( $opcode == 2) {    //INSERT
+        $status = 0;
+        try{
+		$bname = $_POST['txtName'];
+		$bprice = floatval($_POST['txtPrice']);
+		$bqnty = (int)$_POST['txtQnty'];
+        $bkid = intval($_POST['hdnBkid']);
+
+        // OPTION 1: -------- usual execution ------
+        // $sql = "INSERT INTO books (book_name, price, quantity)  VALUES ('$bname', '$bprice', '$bqnty')";
+        // $pdo->exec($sql);  // use exec() because no results are returned
+		
+        
+        // OPTION 2a: --------- using prepared statement + BIND PARAMS() ------------
+        $sql = "UPDATE books SET book_name = :book_name, price = :price, quantity = :quantity WHERE book_id = :book_id";
+
+        $statement = $pdo->prepare($sql);
+
+        $statement->bindParam(':book_name', $bname, PDO::PARAM_STR);
+        $statement->bindParam(':price', $bprice, PDO::PARAM_STR);  // * * * * FOR fractional values (numeric/float) use STR
+        $statement->bindParam(':quantity', $bqnty, PDO::PARAM_INT);
+        $statement->bindParam(':book_id', $bkid, PDO::PARAM_INT);
+
+        $statement->execute();
+        $status = 1;
+
+        // OPTION 2b: ---------- using array of parameters ----------
+        // $statement->execute([ ':book_name' => $bname, ':price' => $bprice, ':quantity' => $bqnty, ':book_id' => $bkid]);  // list of parameters
+        // OR without using :
+        // $statement->execute([ 'book_name' => $bname, 'price' => $bprice, 'quantity' => $bqnty, 'book_id' => $bkid]);
+
+        } catch(Exception $e){
+            echo $e->getMessage();
+            $status = 0;
+        } finally {
+            echo "Closing connection by destroying the object";
+            $pdo = null;
+        }
+
+		header("Location: data_retrieve.php?status=".$status);
+		exit();
 	    
     }
 

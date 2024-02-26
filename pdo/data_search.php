@@ -43,30 +43,19 @@
     Book inventory 
 
 <?php
+    include('serverops_func_pdo.php');
     $pdo = require_once 'PDOConnection.php';
 
-    $bookname = isset($_GET['txtBook']) ? $_GET['txtBook'] : '';
+    $key = isset($_GET['txtBook']) ? $_GET['txtBook'] : '';  //get search key from text box
 
-    $sql="SELECT book_id, book_name, price, quantity FROM books";
+    echo "<br>You searched for - ".$key."</br>";
+    
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // calling a function with connection object parameter & getting result as array
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    $books = find_by_btitle($pdo, $key);
 
-    if($bookname != ''){
-        $sql = $sql . " where book_name = ?";
-        //or
-        // $sql = $sql." where book_name = :book_name ";
-    }
-
-    $stmnt = $pdo->prepare($sql);
-    if($bookname != ''){
-        $stmnt -> execute([$bookname]); // With parameter e.g. $stmnt->execute([175, 'yellow']);
-        // or
-        // $stmnt -> execute([':book_name' => $bookname]); 
-    } else {
-        $stmnt -> execute();
-    }
-
-    $result = $stmnt->fetchall(PDO::FETCH_ASSOC); // returns an array of rows
-
-    if (count($result) > 0) {  // count number of elements in an array
+    if (count($books) > 0) {  // count number of elements in an array
 ?>
     <table>
         <thead>
@@ -74,8 +63,8 @@
         </thead>
 <?php
         $sl = 0;
-        // while ($row = $result->fetch_assoc()) { 
-        foreach ($result as $row){
+     
+        foreach ($books as $row){
 ?>
         <tr>
             <td><?php echo ++$sl; ?></td>
@@ -100,31 +89,3 @@
 
     </body>
 </html>
-
-<?php 
-/*
-// fetching records using function --> USE of LIKE operator
-//-----------------------------------------------------------------
-function find_book_by_title(\PDO $pdo, string $keyword): array
-{
-    $pattern = '%' . $keyword . '%';
-
-    $sql = 'SELECT book_id, title FROM books WHERE title LIKE :pattern';
-
-    $statement = $pdo->prepare($sql);
-    $statement->execute([':pattern' => $pattern]);
-
-    return  $statement->fetchAll(PDO::FETCH_ASSOC);
-}
-
-// connect to the database
-$pdo = require 'connect.php';
-
-// find books with the title matches 'es'
-$books = find_book_by_title($pdo, 'es');
-
-foreach ($books as $book) {
-    echo $book['title'] . '<br>';
-}
-*/
-?>

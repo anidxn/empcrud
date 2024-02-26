@@ -9,14 +9,14 @@
 
     $bkid = isset($_GET['bid']) ? $_GET['bid'] : '';
 
-    //========================= SELECT WITH CLAUSE ==================================
+    //========================= SELECT WITH CLAUSE (with where condition) ==================================
     // $sql="SELECT book_id, book_name, price, quantity FROM books where book_id = :book_id";
     // OR 
     $sql="SELECT book_id, book_name, price, quantity FROM books where book_id = ?";
     
     $stmnt = $pdo->prepare($sql);
     
-    // $stmnt -> execute([':book_id' => $bkid]); 
+    // $stmnt -> execute([':book_id' => $bkid]);   or $stmnt->bindParam(':book_id', $bkid, PDO::PARAM_INT); $stmnt->execute(); => prevents sql injection
     //OR
     $stmnt -> execute([$bkid]); 
     

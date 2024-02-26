@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		header("Location: data_store.php?status=".$book_id);
 		exit();
 	    
-    } else if ( $opcode == 2) {    //INSERT
+    } else if ( $opcode == 2) {    //UPDATE
         $status = 0;
         try{
 		$bname = $_POST['txtName'];
@@ -112,33 +112,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		header("Location: data_retrieve.php?status=".$status);
 		exit();
 	    
+    } else if ( $opcode == 3) {    //DELETE
+        $status = 0;
+        try{
+		    $bookid = intval($_POST['bkid']);
+
+            $sql = "DELETE from books WHERE book_id = :book_id";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':book_id', $bookid, PDO::PARAM_INT);
+
+            if($stmt->execute()){
+                $status = 1;
+            } else {
+                $status = 0;
+            }
+
+        } catch(Exception $e){
+            echo $e->getMessage();
+            $status = 0;
+        } finally {
+            $pdo = null;    //closing connection
+        }
+
+        if($status == 1){
+            $response = array('status' => $status, 'message' => 'Item deleted successfully');
+        } else {
+            $response = array('status' => $status, 'message' => 'Failed to delete item');
+        }
+
+        //return json response
+        echo json_encode($response);
     }
 
 }
 
-//$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/*
-INSERT MULTIPLE rows with loop execute statement
--------------------------------------------------------
-$pdo = require_once 'connect.php';
 
-$names = [
-	'Penguin/Random House',
-	'Hachette Book Group',
-	'Harper Collins',
-	'Simon and Schuster'
-];
 
-$sql = 'INSERT INTO publishers(name) VALUES(:name)';
-
-$statement = $pdo->prepare($sql);
-
-foreach ($names as $name) {
-	$statement->execute([
-		':name' => $name
-	]);
-}
-*/
 
 ?>

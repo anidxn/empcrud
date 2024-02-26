@@ -13,7 +13,7 @@
     
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="../res/css/navstyle.css">
-	
+        <script src="../res/js/jquery-3.6.3.js"></script>
 
         <style>
         table, th, td {
@@ -35,11 +35,6 @@
         
     <?php include 'navbar-pdo.php'; ?>
 
-        <!-- <form action="" method="get">
-            <input type="text" name="txtBook" id="txtBook">
-            <input type="submit" value="SEARCH">
-        </form> -->
-
     Book inventory 
 
 <?php
@@ -47,10 +42,8 @@
 
     $bookname = isset($_GET['txtBook']) ? $_GET['txtBook'] : '';
 
-    $sql="SELECT book_id, book_name, price, quantity FROM books";
-
-    $stmnt = $pdo->query($sql);
-
+    $sql="SELECT book_id, book_name, price, quantity FROM books order by book_name";
+    $stmnt = $pdo->query($sql);         // for select all
 
     $result = $stmnt->fetchall(PDO::FETCH_ASSOC); // returns an array of rows
 
@@ -62,7 +55,6 @@
         </thead>
 <?php
         $sl = 0;
-        // while ($row = $result->fetch_assoc()) { 
         foreach ($result as $row){
 ?>
         <tr>
@@ -71,7 +63,7 @@
             <td><?php echo $row['price']; ?></td>
             <td><?php echo $row['quantity']; ?></td>
             <td><a href="data_edit.php?bid=<?php echo $row['book_id']; ?>">edit</a></td>
-            <td><a href="data_remove.php?bid=<?php echo $row['book_id']; ?>">delete</a></td>
+            <td><button type="button" class="btnDel" data-bid='<?php echo $row['book_id']; ?>'>DELETE</a></td>
         </tr>
 <?php   }   ?>
     </table>   
@@ -87,32 +79,38 @@
 ?>
 
     </body>
+
+    <script>
+        $(document).ready(function() {
+        
+            $('.btnDel').click(function() {
+                // alert('Item id from data field: ' + $(this).data("bid"));
+                
+                if (confirm("Are you sure you want to delete?") == true) {
+                    $.ajax({
+                        url : "serverops_pdo.php?opcode=3",
+                        type: "POST",
+                        data : {
+                            bkid : $(this).data("bid"),
+                        },
+                        dataType: 'json',
+		                success : function(response, status, xhr) {
+                            if (response.status == 1) {
+                                alert(response.message);
+                                // Reload the page or perform any other necessary actions
+                                location.reload();
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error){  // incorrect URl or dta format
+                            alert('Error');
+                        }
+                    });
+                } 
+                
+	        });
+        
+        });
+    </script>
 </html>
-
-<?php 
-/*
-// fetching records using function --> USE of LIKE operator
-//-----------------------------------------------------------------
-function find_book_by_title(\PDO $pdo, string $keyword): array
-{
-    $pattern = '%' . $keyword . '%';
-
-    $sql = 'SELECT book_id, title FROM books WHERE title LIKE :pattern';
-
-    $statement = $pdo->prepare($sql);
-    $statement->execute([':pattern' => $pattern]);
-
-    return  $statement->fetchAll(PDO::FETCH_ASSOC);
-}
-
-// connect to the database
-$pdo = require 'connect.php';
-
-// find books with the title matches 'es'
-$books = find_book_by_title($pdo, 'es');
-
-foreach ($books as $book) {
-    echo $book['title'] . '<br>';
-}
-*/
-?>

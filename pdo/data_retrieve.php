@@ -33,11 +33,9 @@
     </head>
     <body>
         
-    <?php include 'navbar-pdo.php'; ?>
+    <?php
+    include 'navbar-pdo.php'; 
 
-    Book inventory 
-
-<?php
     $pdo = require_once 'PDOConnection.php';
 
     $bookname = isset($_GET['txtBook']) ? $_GET['txtBook'] : '';
@@ -114,3 +112,16 @@
         });
     </script>
 </html>
+
+
+<?php
+/* ================= USING fetch() with a LOOP ==============
+$sql="SELECT book_id, book_name, price, quantity FROM books order by book_name";
+$statement = $pdo->query($sql);
+
+// fetch the next row
+while (($row = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+    ...
+}
+*/
+?>

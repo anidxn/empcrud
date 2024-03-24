@@ -15,4 +15,15 @@ function find_by_btitle(\PDO $pdo, string $keyword): array
     return  $statement->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function get_books_by_publish_date(\PDO $pdo, int $published_year): array
+{
+    $sql = 'CALL get_books_published_after(:published_year)';
+
+    $statement = $pdo->prepare($sql);
+    $statement->bindParam(':published_year', $published_year, PDO::PARAM_INT);
+    $statement->execute();
+
+    return  $statement->fetchAll(PDO::FETCH_ASSOC);
+}
+
 ?>

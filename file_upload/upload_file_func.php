@@ -84,4 +84,58 @@ if ($uploadOk == 0) {
     return $uploadOk == 1? "1~".$status_msg : "0~".$status_msg;
 }
 
+// =================================================================================
+//    upload multiple files to server
+// =================================================================================
+
+function upload_multiples_to_server(String $subdir, Array $uploadedFiles) : array  {   // array of files
+
+  $allowed_ext = array("jpg" => "image/jpg",
+                            "jpeg" => "image/jpeg",
+                            "gif" => "image/gif",
+                            "png" => "image/png");
+
+  date_default_timezone_set('Asia/Kolkata');
+  $max_size = 1024 * 1024;
+  $uploadCount = 0;
+
+  $target_dir = "../uploads/".$subdir."/"; // ADJUST as per requirement
+
+  if(!is_dir($target_dir)) {   
+    mkdir($target_dir);       
+  }
+
+  $uploadedFileNames = array();
+  //$file_name = basename($fileToUpload["name"]);   //basename() returns the trailing name component of a path
+
+  foreach ($uploadedFiles["name"] as $key => $fileName) {
+    $fileTmpName = $uploadedFiles["tmp_name"][$key];
+    $fileType = $uploadedFiles["type"][$key];
+    $fileSize = $uploadedFiles["size"][$key];
+    $fileError = $uploadedFiles["error"][$key];
+
+    // Check if file is uploaded without any errors
+    if ($fileError == UPLOAD_ERR_OK) {
+        //prepend datetime in file
+        $filename = date('m-d-Y-Hi') . '_' . $filename;  // prepend date & time to allow upload same file multiple times
+        $target_file = $target_dir . $filename ;
+
+        // $destination = $uploadDirectory . $fileName;
+        
+        // Move uploaded file to destination
+        if (move_uploaded_file($fileTmpName, $target_file)) {   //$destination
+            //echo "File {$fileName} has been uploaded successfully.<br>";
+            $uploadedFileNames[] = $filename;
+            $uploadCount++;
+        } else {
+            // echo "Error uploading {$fileName}.<br>";
+        }
+    } else {
+        // echo "Error uploading {$fileName}: " . getUploadErrorMessage($fileError) . "<br>";
+    }
+  }
+  return $uploadedFileNames; //$uploadCount;
+
+}
+
 ?>

@@ -31,6 +31,7 @@
         <a href='<?php echo '/empcrud/file_upload/upload_B64.php'; ?>'>Upload to DB (Base64)</a>
         <a href='<?php echo '/empcrud/file_upload/upload_BLOB.php'; ?>'>Upload to DB (BLOB)</a>
         <a href='<?php echo '/empcrud/file_upload/upload_fileWithB64.php'; ?>'>Upload to DB (Base64) + Folder</a>
+        <a href='<?php echo '/empcrud/file_upload/upload_multiple.php'; ?>'>Upload multiple files to Folder</a>
       </div>
     </div>
     <a href='<?php echo '/empcrud/logout.php'; ?>'>Logout</a>

@@ -3,7 +3,7 @@
 // connection through procedural approach
 $server = "localhost";
 $username = "root";
-$password = "";
+$password = "*WhitE35";
 $dbname = "misdbpr";
 
 $conn = mysqli_connect($server, $username, $password, $dbname);

@@ -145,7 +145,93 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode($response);
     }
 
+    else if ( $opcode == 4) {           // MySQL can not process nested query (SO break into 2 queries)
+        if(isset($_POST['submit'])) {
+            // $pdo = require_once 'pdo/PDOConnection.php';
+            try{
+            $dept_name = $_POST['dname'];
+
+            $pdo->beginTransaction();
+            
+            $sql1 = "select coalesce (max(did),0)+1 as new_id from department";
+            $statement = $pdo->prepare($sql1);
+            $statement->execute();
+            
+            $result = $statement->fetch(PDO::FETCH_ASSOC); //fetch for single row
+            $did = $result['new_id'];
+            $status = 0;
+            // $sql="INSERT INTO department (did, dname) VALUES ((select max(did)+1 from department),'$dept_name')"; this will work in postgressSQL
+           
+            $sql="INSERT INTO department (did, dname) VALUES ('$did','$dept_name')";
+    
+            $statement2 = $pdo->prepare($sql);
+            if ($statement2->execute()){
+                $status = 1;
+                $statement->closeCursor(); //for memory management clear the memory after select query
+                $statement2->closeCursor();
+                $pdo->commit();
+    
+            }
+        } catch(Exception $e) {
+            $pdo->rollBack();
+            $status=0;
+        }
+        finally{
+            $pdo->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);//1 means autocomit on for future transactions
+        }
+
+            header("Location: ../deptentry.php?status=".$status);
+            exit;
+        }
+    }
+
+    else if ( $opcode == 5) {
+        if(isset($_POST['submit_author'])) {
+            // $pdo = require_once 'pdo/PDOConnection.php';
+            try{
+            $bkid = $_POST['ddlbookid'];
+            $first_name = $_POST['fname'];
+            $mid_name = $_POST['mname'];
+            $last_name = $_POST['lname'];
+    
+            $pdo->beginTransaction();
+            
+            $sql1 = "CALL SAVEAUTHOR (:bk_id, :fname, :mname, :lname)";
+            $statement = $pdo->prepare($sql1);
+            
+            $statement->bindParam(':bk_id', $bkid, PDO::PARAM_INT);
+            $statement->bindParam(':fname', $first_name, PDO::PARAM_STR);
+            $statement->bindParam(':mname', $mid_name, PDO::PARAM_STR);
+            $statement->bindParam(':lname', $last_name, PDO::PARAM_STR);
+            
+            
+            if ($statement->execute()){
+                $status = 1;
+                // $statement->closeCursor(); //for memory management clear the memory after select query
+                // $statement2->closeCursor();
+                $pdo->commit();
+    
+            }
+        }catch(Exception $e) {
+            $pdo->rollBack();
+            $status=0;
+            echo $e->getMessage();
+    
+        }
+        finally{
+            $pdo->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);//1 means autocomit on for future transactions
+        }
+    
+            header("Location: authors.php?status=".$status);
+            exit;
+        }
+    }
+    
+
 }
+
+
+
 
 
 

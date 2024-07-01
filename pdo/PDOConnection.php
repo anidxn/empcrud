@@ -20,6 +20,6 @@ class PDOConnection
 return PDOConnection::make($server, $db_name, $username, $password);
 
 //------ call it ----
-// $pdo = require 'PDOConnection.php';
+// $pdo = require 'Connection.php';
 
 ?>

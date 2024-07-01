@@ -22,7 +22,8 @@
     <a href='<?php echo '/empcrud/viewall.php'; ?>'>View all user</a>
     <a href='<?php echo '/empcrud/offices.php'; ?>'>Offices (dependency DDL)</a>
     <a href='<?php echo '/empcrud/autofillsrch.php'; ?>'>Projects (Autofill)</a>
-    <a href='<?php echo '/empcrud/pg_login.php'; ?>'>Switch to postgres</a>
+    <a href='<?php echo '/empcrud/projects.php'; ?>'>Show Projects (OOP)</a>
+    <a href='<?php echo '/empcrud/pg/pg_login.php'; ?>'>Switch to postgres</a>
     <a href='<?php echo '/empcrud/pdo/data_store.php'; ?>'>PDO</a>
     <div class="dropdown">
       <button class="dropbtn">Uploads</button>
@@ -31,7 +32,6 @@
         <a href='<?php echo '/empcrud/file_upload/upload_B64.php'; ?>'>Upload to DB (Base64)</a>
         <a href='<?php echo '/empcrud/file_upload/upload_BLOB.php'; ?>'>Upload to DB (BLOB)</a>
         <a href='<?php echo '/empcrud/file_upload/upload_fileWithB64.php'; ?>'>Upload to DB (Base64) + Folder</a>
-        <a href='<?php echo '/empcrud/file_upload/upload_multiple.php'; ?>'>Upload multiple files to Folder</a>
       </div>
     </div>
     <a href='<?php echo '/empcrud/logout.php'; ?>'>Logout</a>

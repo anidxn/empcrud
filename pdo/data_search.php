@@ -36,7 +36,7 @@
     <?php include 'navbar-pdo.php'; ?>
 
         <form action="" method="get">
-            <input type="text" name="txtBook" id="txtBook">
+            <input type="text" name="txtBook" id="txtBook" placeholder = "Type in part of the keyword & hit search">
             <input type="submit" value="SEARCH">
         </form>
 

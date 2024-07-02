@@ -7,57 +7,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ( $opcode == 1) {    //INSERT
         try{
-		$bname = $_POST['txtName'];
-		$bprice = floatval($_POST['txtPrice']);
-		$bqnty = (int)$_POST['txtQnty'];
-        
-        // OPTION 1: -------- usual execution ------
-        // $sql = "INSERT INTO books (book_name, price, quantity)  VALUES ('$bname', '$bprice', '$bqnty')";
-        // $pdo->exec($sql);  // use exec() because no results are returned
-		
-        
-        // OPTION 2a: --------- using prepared statement + BIND PARAMS() ------------
-		$sql="INSERT INTO books(book_name, price, quantity) VALUES(:book_name, :price, :quantity)";
+            $bname = $_POST['txtName'];
+            $bprice = floatval($_POST['txtPrice']);
+            $bqnty = (int)$_POST['txtQnty'];
+            
+            // OPTION 1: -------- usual execution ------
+            // $sql = "INSERT INTO books (book_name, price, quantity)  VALUES ('$bname', '$bprice', '$bqnty')";
+            // $pdo->exec($sql);  // use exec() because no results are returned
+            
+            
+            // OPTION 2a: --------- using prepared statement + BIND PARAMS() ------------
+            $sql="INSERT INTO books(book_name, price, quantity) VALUES(:book_name, :price, :quantity)";
 
-        $statement = $pdo->prepare($sql);
+            $statement = $pdo->prepare($sql);
 
-        /*
-        $statement->bindParam(':book_name', $bname, PDO::PARAM_STR);
-        $statement->bindParam(':price', $bprice, PDO::PARAM_STR);  // * * * * FOR fractional values (numeric/float) use STR
-        $statement->bindParam(':quantity', $bqnty, PDO::PARAM_INT);
-        $statement->execute();
-        */
+            /*
+            $statement->bindParam(':book_name', $bname, PDO::PARAM_STR);
+            $statement->bindParam(':price', $bprice, PDO::PARAM_STR);  // * * * * FOR fractional values (numeric/float) use STR
+            $statement->bindParam(':quantity', $bqnty, PDO::PARAM_INT);
+            $statement->execute();
+            */
 
-        /* Additionally ------->>> We can insert multiple records using the same same perpared statement, for ex. 
-        $bname = "Coffee Can Investing";    $bprice = "200.5";     $bqnty = "10";
-        $stmt->execute();
+            /* Additionally ------->>> We can insert multiple records using the same same perpared statement, for ex. 
+            $bname = "Coffee Can Investing";    $bprice = "200.5";     $bqnty = "10";
+            $stmt->execute();
 
-        // insert another row
-        $bname = "Diamond In the Dust";    $bprice = "545.8";     $bqnty = "56";
-        $stmt->execute();
-        */
+            // insert another row
+            $bname = "Diamond In the Dust";    $bprice = "545.8";     $bqnty = "56";
+            $stmt->execute();
+            */
 
-        // OPTION 2b: ---------- using array of parameters ----------
-        $statement->execute([ ':book_name' => $bname, ':price' => $bprice, ':quantity' => $bqnty]);  // list of parameters
-        // OR without using :
-        //$statement->execute([ 'book_name' => $bname, 'price' => $bprice, 'quantity' => $bqnty]);
+            // OPTION 2b: ---------- using array of parameters ----------
+            $statement->execute([ ':book_name' => $bname, ':price' => $bprice, ':quantity' => $bqnty]);  // list of parameters
+            // OR without using :
+            //$statement->execute([ 'book_name' => $bname, 'price' => $bprice, 'quantity' => $bqnty]);
 
-        /* Additionally ----->> Inserting multiple rows --->>
-        $names = [
-	        'Penguin/Random House',
-	        'Hachette Book Group',
-	        'Harper Collins',
-	        'Simon and Schuster'
-        ];
+            /* Additionally ----->> Inserting multiple rows --->>
+            $names = [
+                'Penguin/Random House',
+                'Hachette Book Group',
+                'Harper Collins',
+                'Simon and Schuster'
+            ];
 
-        foreach ($names as $name) { //process array in loop
-	        $statement->execute([
-		        ':name' => $name
-	        ]);
-        }
-        */
-        
-        $book_id = $pdo->lastInsertId();  # Returns the PKey of last inserted row
+            foreach ($names as $name) { //process array in loop
+                $statement->execute([
+                    ':name' => $name
+                ]);
+            }
+            */
+            
+            $book_id = $pdo->lastInsertId();  # Returns the PKey of last inserted row
 
         } catch(Exception $e){
             echo $e->getMessage();
@@ -151,6 +151,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try{
             $dept_name = $_POST['dname'];
 
+            /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                            TRANSACTION MANAGEMENT
+            ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
             $pdo->beginTransaction();
             
             $sql1 = "select coalesce (max(did),0)+1 as new_id from department";
@@ -167,17 +170,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $statement2 = $pdo->prepare($sql);
             if ($statement2->execute()){
                 $status = 1;
-                $statement->closeCursor(); //for memory management clear the memory after select query
+                // +++++++++++ for memory management clear the memory after select query ++++++++++
+                $statement->closeCursor(); 
                 $statement2->closeCursor();
+                /* ++++++++++++++++++++     FINAL COMMIT    +++++++++++++++++++++++*/
                 $pdo->commit();
     
             }
         } catch(Exception $e) {
-            $pdo->rollBack();
+            if($pdo != NULL)
+                /* ++++++++++++++++++++     ROLLBACK    +++++++++++++++++++++++*/
+                $pdo->rollBack();
             $status=0;
+            echo $e->getMessage();
         }
         finally{
-            $pdo->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);//1 means autocomit on for future transactions
+            if($pdo != NULL)
+                $pdo->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);//1 means autocomit on for future transactions
+            // CLOSE connection
+            $pdo = NULL;
         }
 
             header("Location: ../deptentry.php?status=".$status);
@@ -186,9 +197,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     else if ( $opcode == 5) {
-        if(isset($_POST['submit_author'])) {
-            // $pdo = require_once 'pdo/PDOConnection.php';
-            try{
+
+        // $pdo = require_once 'pdo/PDOConnection.php';
+        try{
             $bkid = $_POST['ddlbookid'];
             $first_name = $_POST['fname'];
             $mid_name = $_POST['mname'];
@@ -196,6 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
             $pdo->beginTransaction();
             
+            // =========== call to a stored procedure  =================
             $sql1 = "CALL SAVEAUTHOR (:bk_id, :fname, :mname, :lname)";
             $statement = $pdo->prepare($sql1);
             
@@ -209,22 +221,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $status = 1;
                 // $statement->closeCursor(); //for memory management clear the memory after select query
                 // $statement2->closeCursor();
+
+                // ------------     FINAL COMMIT    -------------
                 $pdo->commit();
     
             }
         }catch(Exception $e) {
-            $pdo->rollBack();
+            if($pdo != NULL)
+                // ---------   ROLLBACK   -------------   
+                $pdo->rollBack();
             $status=0;
             echo $e->getMessage();
     
         }
         finally{
-            $pdo->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);//1 means autocomit on for future transactions
+            if($pdo != NULL)
+                $pdo->setAttribute(PDO::ATTR_AUTOCOMMIT, 1);
+
+            // CLOSE connection
+            $pdo = NULL;
         }
     
             header("Location: authors.php?status=".$status);
             exit;
-        }
+        
     }
     
 

@@ -15,9 +15,6 @@ $url = 'http://127.0.0.1:8085/api/v1/companies/';
 $curl_session_hndl = curl_init();
 
 
-
-
-
 $opcode = "";
 if(isset($_GET['OP'])){
     $opcode = $_GET['OP'];
@@ -72,6 +69,29 @@ switch($opcode){
     case "PUT":
     break;
     case "PATCH":
+
+        $payload = json_encode([
+            "name"      => "Panasonic",
+            "location"  => "Japan",
+            "about"     => "Consumer electronics",
+            "type"      => "IT",
+            "active"    => false            
+        ]);
+
+        $headers = [
+            "Content-type: application/json; charset=UTF-8",
+            "Accept-language: en"
+        ];
+
+        curl_setopt_array($curl_session_hndl, 
+        [
+            CURLOPT_URL => "http://127.0.0.1:8085/api/v1/companies/8/",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => "PATCH",
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_HTTPHEADER => $headers
+            // CURLOPT_HEADER => true
+        ]);
     break;
     case "DELETE":
     break;
@@ -80,7 +100,11 @@ switch($opcode){
 
 $response = curl_exec($curl_session_hndl);
 
+$status_code = curl_getinfo($curl_session_hndl, CURLINFO_HTTP_CODE);    // status code
+
 curl_close($curl_session_hndl);
+
+var_dump($status_code);
 
 var_dump($response);
 
